@@ -2,12 +2,15 @@ const express = require("express")
 const mongoose = require("mongoose")
 const dotenv = require('dotenv')
 const connectDB = require('./config/db')
+const cors = require('cors')
+
 
 const app = express();
 
 app.use(express.urlencoded({extended: false}))
 app.use(express.json())
 
+app.use(cors())
 
 dotenv.config({path: 'config/config.env'})
 

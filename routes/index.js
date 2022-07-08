@@ -2,17 +2,18 @@ const express = require('express')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const User = require('../models/User')
+const { ensureAuth } = require('../middleware/auth')
 
 const router = express.Router()
 
 
-const token = (id) => {
+const generateToken = (id) => {
     return jwt.sign({id}, process.env.TOKEN, {
-        expiresin: '30d'
+        expiresIn: '30d'
     })
 }
 
-
+// signup
 router.post('/signup', async (req, res) => {
     const { name, email, password } = req.body
 
@@ -30,18 +31,20 @@ router.post('/signup', async (req, res) => {
                 res.status(400).json({message: 'user already exists'})
             }
             else{
+
                 const salt = await bcrypt.genSalt(10)
                 const hashedpassword = await bcrypt.hash(password, salt) 
                 user = await User.create({
                     name,
                     email,
-                    password: hashedpassword
+                    password: hashedpassword,
                 })
-                res.json({
-                    _id : user._id,
+                res.status(201).json({
+                    _id : user.id,
                     name: user.name,
                     email: user.email,
-                    password: user.password
+                    password: user.password,
+                    token: generateToken(user.id)
                 })
     
             }
@@ -51,25 +54,43 @@ router.post('/signup', async (req, res) => {
     }
 })
 
+// login
+router.post('/login', async(req, res) => {
+    const { email, password } = req.body
+    try {
+        let user = await User.findOne({email})
 
+        if (user && await bcrypt.compare(password, user.password)) {
+            res.status(201).json({
+                _id: user.id,
+                name: user.name,
+                email: user.email,
+                token: generateToken(user.id)
+            })
+        }
+        else{
+            res.status(400).json({message: 'Email or Password incorrect'})
+        }
+    } catch (error) {
+        console.log(error)
+    }
+})
 
-// router.post('/login', async(req, res) => {
-//     const { email, password } = req.body
-//     try {
-//         let user = await User.find({email})
+// dashboard
 
-//         if (user && password == await bcrypt.compare(password, user.password)) {
-//                 res.json('ok')            
-//         }
-//         else{
-//             res.json('no')
-//         }
-//     } catch (error) {
-//         console.log(error)
-//     }
-// })
-
-
+router.get('/dashboard', ensureAuth, async(req, res) => {
+    try {
+        let user = await User.findById({_id: req.user.id})
+        res.status(200).json({
+            name: user.name,
+            email: user.email
+        })
+        
+    } catch (error) {
+        console.log(error)
+        
+    }
+})
 
 
 
