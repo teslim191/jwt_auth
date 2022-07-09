@@ -4,9 +4,11 @@ const jwt = require('jsonwebtoken')
 const User = require('../models/User')
 const { ensureAuth } = require('../middleware/auth')
 
+
 const router = express.Router()
 
 
+// generate a token for a user
 const generateToken = (id) => {
     return jwt.sign({id}, process.env.TOKEN, {
         expiresIn: '30d'
