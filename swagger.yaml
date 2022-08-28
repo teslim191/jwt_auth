@@ -1,0 +1,139 @@
+openapi: 3.0.0
+info:
+  title: using JWToken, APIcache and rate limiting with RESTAPI
+  description: MongoDB ExpressJS NodeJS REST API
+  version: 1.0.0
+servers:
+  - url: http://localhost:4000/
+    description: Localhost development server
+components:
+  securitySchemes:
+    bearerAuth:            # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+
+    Post:
+      type: object
+      properties:
+        title:
+          type: string
+        body:
+          type: string
+        user:
+          type: string
+        comment:
+          type: string
+
+    Comment:
+      type: object
+      properties:
+        body:
+          type: string
+        post:
+          type: string
+        user:
+          type: string
+
+paths:
+  /signup:
+    post:
+      summary: Register a new User
+      description: Register a new User in the database
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+
+      responses:
+        201:
+          description: User created succesfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  _id:
+                    type: string
+
+
+  /login:
+    post:
+      summary: Login a User
+      description: Login a User in order to get JWT token (auth-token)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      
+      responses:
+        200:
+          description: User logged in succesfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  data:
+                    type: string
+
+
+  /dashboard:
+    get:
+      security:
+        - bearerAuth: []
+      summary: Dashboard of the user
+      description: Get details of login user
+      responses:
+        200:
+          description: The details of the login user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  email:  
+                    type: string
+
+
+  /api/users:
+    get:
+      summary: Retrieves a list of registered users
+      description: Retrieves a list of users as JSON objects.
+      responses:
+        200:
+          description: A list of users JSON objects in an array.
+          security:
+            - bearerAuth: []
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"

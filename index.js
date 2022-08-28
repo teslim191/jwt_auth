@@ -4,8 +4,9 @@ const dotenv = require('dotenv')
 const connectDB = require('./config/db')
 const cors = require('cors')
 const rateLimit = require('express-rate-limit')
-const apicache = require('apicache')
-
+const swaggerJsdoc = require('swagger-jsdoc')
+const swaggerUi = require('swagger-ui-express')
+const yaml = require('yamljs')
 
 const app = express();
 
@@ -35,10 +36,26 @@ app.use(limiter)
 // app.set('trust proxy', 1)
 
 // init apicache
-const cache = apicache.middleware
+// const cache = apicache.middleware
 // use it on all routes
-app.use(cache('5 minute'))
+// app.use(cache('5 minutes'))
 
+// swagger
+// const swaggerOptions = {
+//     swaggerDefinition: {
+//         info: {
+//             title: 'Blog',
+//             description: 'using JWToken, APIcache and rate limiting with RESTAPI',
+//             contact: {
+//                 name:'Teslim Jimoh'   
+//             },
+//             servers:["http://localhost:4000"]
+//         }
+//     },
+//     apis: ['./routes/*.js']
+// }
+const swaggerDefinition = yaml.load('./swagger.yaml')
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDefinition))
 
 app.use('/', require('./routes/index'))
 app.use('/api', require('./routes/api'))
