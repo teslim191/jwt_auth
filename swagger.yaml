@@ -31,19 +31,12 @@ components:
           type: string
         body:
           type: string
-        user:
-          type: string
-        comment:
-          type: string
+
 
     Comment:
       type: object
       properties:
         body:
-          type: string
-        post:
-          type: string
-        user:
           type: string
 
 paths:
@@ -124,16 +117,179 @@ paths:
 
   /api/users:
     get:
+      security:
+        - bearerAuth: []
       summary: Retrieves a list of registered users
       description: Retrieves a list of users as JSON objects.
       responses:
         200:
           description: A list of users JSON objects in an array.
-          security:
-            - bearerAuth: []
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: "#/components/schemas/User"
+
+
+  /api/user/{id}:
+    get:
+      security:
+        - bearerAuth: []
+      summary: Retrieves a Specific User
+      description: Retrieves a specific User based on it's id.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: MongoDB id
+          schema:
+            type: string
+      responses:
+        200:
+          description: A User in the format of a JSON object.
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: "#/components/schemas/User"
+
+  /api/post:
+    post:
+      security:
+        - bearerAuth: []
+      summary: Create a new Post
+      description: Create a new Post      
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Post"
+      responses:
+        201:
+          description: Post created succesfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Post"
+
+  /api/post/{id}/comment:
+    post:
+      security:
+        - bearerAuth: []
+      summary: Creates a new comment on a specific post
+      description: Creates a new comment on a post based on it's id.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: MongoDB id
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Comment"
+
+      responses:
+        201:
+          description: A Comment in the format of a JSON object.
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: "#/components/schemas/Comment"
+
+  /api/posts:
+    get:
+      security:
+        - bearerAuth: []
+      summary: Retrieves all Posts and Comments of the logged in user.
+      description: Retrieves a logged in user Posts and comments if there is any available.
+      responses:
+        200:
+          description: A list of Posts in the format of a JSON object.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Post"
+
+  /api/post/{id}:
+    get:
+      security:
+        - bearerAuth: []
+      summary: Retrieves a Specific Post and Comment
+      description: Retrieves a specific Post based on it's id and it's comments.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: MongoDB id
+          schema:
+            type: string
+      responses:
+        200:
+          description: A Post in the format of a JSON object.
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: "#/components/schemas/Post"
+
+
+    put:
+      security:
+        - bearerAuth: []
+      summary: Updates a specific Post
+      description: Updates a specific Post based on it id      
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: MongoDB id
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Post"
+
+      responses:
+        201:
+          description: Post updated succesfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Post"
+
+
+    delete:
+      security:
+        - bearerAuth: []
+      summary: Deletes a specific Post 
+      description: Deletes a specific Post based on it's id            
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: MongoDB id
+          schema:
+            type: string      
+
+      responses:
+        201:
+          description: Post deleted succesfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Post"

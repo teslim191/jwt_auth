@@ -124,7 +124,7 @@ router.put("/post/:id", ensureAuth, cache('5 minutes'), async (req, res) => {
         new: true,
         runValidators: true,
       });
-      res.json(post);
+      res.status(201).json(post);
     }
   } catch (error) {
     console.log(error);
