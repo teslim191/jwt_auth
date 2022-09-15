@@ -12,6 +12,9 @@ const generateToken = (id) => {
   });
 };
 
+router.get('/', (req, res) => {
+  res.render('index')
+})
 
 
 router.post("/signup", async (req, res) => {

@@ -4,7 +4,7 @@ info:
   description: MongoDB ExpressJS NodeJS REST API
   version: 1.0.0
 servers:
-  - url: http://localhost:4000/
+  - url: https://test-blog.up.railway.app/
     description: Localhost development server
 components:
   securitySchemes:
