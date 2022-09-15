@@ -5,10 +5,10 @@ info:
   version: 1.0.0
 servers:
   - url: https://test-blog.up.railway.app/
-    description: Localhost development server
+    description:
 components:
   securitySchemes:
-    bearerAuth:            # arbitrary name for the security scheme
+    bearerAuth: # arbitrary name for the security scheme
       type: http
       scheme: bearer
       bearerFormat: JWT
@@ -31,7 +31,6 @@ components:
           type: string
         body:
           type: string
-
 
     Comment:
       type: object
@@ -64,7 +63,6 @@ paths:
                   _id:
                     type: string
 
-
   /login:
     post:
       summary: Login a User
@@ -80,7 +78,7 @@ paths:
                   type: string
                 password:
                   type: string
-      
+
       responses:
         200:
           description: User logged in succesfully
@@ -93,7 +91,6 @@ paths:
                     type: string
                   data:
                     type: string
-
 
   /dashboard:
     get:
@@ -111,9 +108,8 @@ paths:
                 properties:
                   name:
                     type: string
-                  email:  
+                  email:
                     type: string
-
 
   /api/users:
     get:
@@ -130,7 +126,6 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/User"
-
 
   /api/user/{id}:
     get:
@@ -160,7 +155,7 @@ paths:
       security:
         - bearerAuth: []
       summary: Create a new Post
-      description: Create a new Post      
+      description: Create a new Post
       requestBody:
         required: true
         content:
@@ -244,12 +239,11 @@ paths:
                 items:
                   $ref: "#/components/schemas/Post"
 
-
     put:
       security:
         - bearerAuth: []
       summary: Updates a specific Post
-      description: Updates a specific Post based on it id      
+      description: Updates a specific Post based on it id
       parameters:
         - in: path
           name: id
@@ -272,19 +266,18 @@ paths:
               schema:
                 $ref: "#/components/schemas/Post"
 
-
     delete:
       security:
         - bearerAuth: []
-      summary: Deletes a specific Post 
-      description: Deletes a specific Post based on it's id            
+      summary: Deletes a specific Post
+      description: Deletes a specific Post based on it's id
       parameters:
         - in: path
           name: id
           required: true
           description: MongoDB id
           schema:
-            type: string      
+            type: string
 
       responses:
         201:
