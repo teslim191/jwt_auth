@@ -8,9 +8,13 @@ const { ensureAuth } = require("../middleware/auth");
 
 const cache = apicache.middleware
 // get all users in the database
-router.get("/users", ensureAuth, cache('5 minutes'), async (req, res) => {
+router.get("/users", ensureAuth, async (req, res) => {
+  const pages  = req.query.pages || 0
+  const usersPerPage = 3
   try {
-    let users = await User.find();
+    let users = await User.find()
+    .skip(pages * usersPerPage)
+    .limit(usersPerPage)
     if (!users) {
       res.status(400).json({ message: "No User found" });
     } else {
@@ -22,7 +26,7 @@ router.get("/users", ensureAuth, cache('5 minutes'), async (req, res) => {
 });
 
 // get a single user
-router.get("/user/:id", cache('5 minutes'), ensureAuth, async (req, res) => {
+router.get("/user/:id", cache('1 minutes'), ensureAuth, async (req, res) => {
   try {
     let user = await User.findById({ _id: req.params.id });
     if (!user) {
@@ -43,7 +47,7 @@ router.get("/user", async (req, res) => {
 });
 
 // create a post
-router.post("/post", ensureAuth,  cache('5 minutes'), async (req, res) => {
+router.post("/post", ensureAuth,  cache('1 minutes'), async (req, res) => {
   const { title, body } = req.body;
   try {
     let post = await Post.create({
@@ -58,7 +62,7 @@ router.post("/post", ensureAuth,  cache('5 minutes'), async (req, res) => {
 });
 
 // get all posts of single user
-router.get("/posts", ensureAuth, async (req, res) => {
+router.get("/posts", ensureAuth, cache('1 minutes'), async (req, res) => {
   try {
     let posts = await Post.find({ user: req.user.id });
     let comments = await Comment.find({ user: req.user.id });
@@ -77,7 +81,7 @@ router.get("/posts", ensureAuth, async (req, res) => {
 });
 
 // get post and comment
-router.get("/post/:id", ensureAuth, cache('5 minutes'), async (req, res) => {
+router.get("/post/:id", ensureAuth, cache('1 minutes'), async (req, res) => {
   try {
     let posts = await Post.findById({ _id: req.params.id });
     let comments = await Comment.find({ post: req.params.id })
@@ -96,7 +100,7 @@ router.get("/post/:id", ensureAuth, cache('5 minutes'), async (req, res) => {
 });
 
 // get a single post of a user
-router.get("/post/:id", ensureAuth, cache('5 minutes'), async (req, res) => {
+router.get("/post/:id", ensureAuth, cache('1 minutes'), async (req, res) => {
   try {
     let post = await Post.findById({ _id: req.params.id });
     if (!post) {
@@ -112,7 +116,7 @@ router.get("/post/:id", ensureAuth, cache('5 minutes'), async (req, res) => {
 });
 
 // edit a post
-router.put("/post/:id", ensureAuth, cache('5 minutes'), async (req, res) => {
+router.put("/post/:id", ensureAuth, cache('1 minutes'), async (req, res) => {
   try {
     let post = await Post.findById({ _id: req.params.id });
     if (!post) {
@@ -133,7 +137,7 @@ router.put("/post/:id", ensureAuth, cache('5 minutes'), async (req, res) => {
 
 // delete a post
 
-router.delete("/post/:id", ensureAuth, cache('5 minutes'), async (req, res) => {
+router.delete("/post/:id", ensureAuth, cache('1 minutes'), async (req, res) => {
   try {
     let post = await Post.findById({ _id: req.params.id });
     if (!post) {
@@ -150,7 +154,7 @@ router.delete("/post/:id", ensureAuth, cache('5 minutes'), async (req, res) => {
 });
 
 // create a comment
-router.post("/post/:id/comment", ensureAuth, cache('5 minutes'), async (req, res) => {
+router.post("/post/:id/comment", ensureAuth, cache('1 minutes'), async (req, res) => {
   const { body } = req.body;
   try {
     let post = await Post.findById({ _id: req.params.id });
