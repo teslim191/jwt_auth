@@ -66,7 +66,8 @@ router.get("/posts", ensureAuth, cache("1 minutes"), async (req, res) => {
   const pages = req.query.pages || 0;
   const postsPerPage = 3;
   try {
-    let posts = await Post.find({ user: req.user.id })
+    
+    let posts = await Post.find({ user: req.user.id }).explain('executionStats')
       .skip(pages * postsPerPage)
       .limit(postsPerPage);
     let comments = await Comment.find({ user: req.user.id });
@@ -78,6 +79,7 @@ router.get("/posts", ensureAuth, cache("1 minutes"), async (req, res) => {
       res.status(200).json({ posts, comments: "this user has no comment" });
     } else {
       res.status(200).json({ posts, comments });
+      console.log(posts)
     }
   } catch (error) {
     console.log(error);

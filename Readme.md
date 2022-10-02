@@ -16,6 +16,7 @@
 # how to use
 1. clone repo with git clone or download zip file and extract.
 2. run npm i to install dependencies.
-3. run npm run dev to run server
-4. go to http://localhost:4000/api-docs
+3. create a config.env file add a mongo uri connection string and a token
+4. run npm run dev to run server
+5. go to http://localhost:4000/api-docs
 

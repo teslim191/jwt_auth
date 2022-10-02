@@ -76,7 +76,7 @@ router.post("/login", async (req, res) => {
 
 router.get("/dashboard", ensureAuth, async (req, res) => {
   try {
-    let user = await User.findById({ _id: req.user.id });
+    let user = await User.findById({ _id: req.user.id })
     res.status(200).json({
       name: user.name,
       email: user.email,
